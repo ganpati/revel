@@ -179,9 +179,9 @@ func hasLocaleCookie(request *Request) (bool, string) {
 		name := Config.StringDefault(localeCookieConfigKey, CookiePrefix+"_LANG")
 		if cookie, error := request.Cookie(name); error == nil {
 			return true, cookie.Value
-		} else {
-			TRACE.Printf("Unable to read locale cookie with name '%s': %s", name, error.Error())
-		}
+		}// else {
+		//	TRACE.Printf("Unable to read locale cookie with name '%s': %s", name, error.Error())
+		//}
 	}
 
 	return false, ""

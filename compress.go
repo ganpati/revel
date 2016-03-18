@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+    "fmt"
 )
 
 var compressionTypes = [...]string{
@@ -25,6 +26,7 @@ var compressableMimes = [...]string{
 	"application/rss+xml",
 	"application/javascript",
 	"application/x-javascript",
+    "text/svg+xml",
 }
 
 type WriteFlusher interface {
@@ -46,6 +48,7 @@ type CompressResponseWriter struct {
 func CompressFilter(c *Controller, fc []Filter) {
 	fc[0](c, fc[1:])
 	if Config.BoolDefault("results.compressed", false) {
+        fmt.Println("Attempting to compress", c.Response.Status, ")")
 		if c.Response.Status != http.StatusNoContent && c.Response.Status != http.StatusNotModified {
 			writer := CompressResponseWriter{c.Response.Out, nil, "", false, make(chan bool, 1), nil, false}
 			writer.DetectCompressionType(c.Request, c.Response)
@@ -55,7 +58,7 @@ func CompressFilter(c *Controller, fc []Filter) {
 			}
 			c.Response.Out = &writer
 		} else {
-			TRACE.Printf("Compression disabled for response status (%d)", c.Response.Status)
+			fmt.Printf("Compression disabled for response status (%d)\n", c.Response.Status)
 		}
 	}
 }
